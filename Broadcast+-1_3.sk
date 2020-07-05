@@ -1,0 +1,353 @@
+options:
+	
+	prefix: &8&l[&c&lBC+&8&l]
+	nopermission: &cYou don't have permission for that!
+	cooldownmsg: &cPlease wait until the cooldown ends
+
+	version: v1.3
+		
+	# Dont change this link!
+	updatetext: https://pastebin.com/raw/YEPKiKF5
+	updateurl: https://www.spigotmc.org/resources/skript-broadcast.81057/
+	
+	# This permission is needed for all Broadcast+ commands (this is OP permission)!
+	permission: broadcastplus.*
+
+variables:
+	{broadcast+.style.1} = "&c> &8&m---------------&r&c&l BROADCAST &8&m---------------&r &c<"
+	{broadcast+.style.2} = "&a> &7&m---------------&r&a&l BROADCAST &7&m---------------&r &a<"
+	{broadcast+.style.3} = "&3&l> &8&m---------------&r&b&l BROADCAST &8&m---------------&r &3&l<"
+	{broadcast+.style.4} = "&6&l> &7&m---------------&r&e&l BROADCAST &7&m---------------&r &6&l<"
+	{broadcast+.style.5} = "&9&l> &8&m---------------&r&3&l BROADCAST &8&m---------------&r &9&l<"
+	{broadcast+.updateinfo} = true
+	{broadcast+.settingtext.1.%player%} = false
+	{broadcast+.settingtext.2.%player%} = false
+	{broadcast+.settingtext.3.%player%} = false
+	{broadcast+.settingtext.4.%player%} = false
+	{broadcast+.settingtext.5.%player%} = false
+	{broadcast+.choosingeditingstyle.%player%} = false
+	{broadcast+.editingstyle.1.%player%} = false
+	{broadcast+.editingstyle.2.%player%} = false
+	{broadcast+.editingstyle.3.%player%} = false
+	{broadcast+.editingstyle.4.%player%} = false
+	{broadcast+.editingstyle.5.%player%} = false
+	{broadcast+.text} = "Nothing"
+
+# ------------------------------------------------------------------------------ #
+
+on join:
+  if {broadcast+.updateinfo} is true:
+    if player has permission "broadcastplus.update" or "{@permission}":
+      wait 10 ticks
+      send "{@prefix} &aChecking for a new updates.."
+      wait 1 seconds
+      if text from "{@updatetext}" is not "{@version}":
+        set {update.version} to text from "{@updatetext}"
+        wait 0.4 seconds
+        send "&r"
+        send "&8&m-----------------------------------"
+        send "{@prefix} &6New update for Broadcast+ available!"
+        send "&r &eNew version: &7(&a%{update.version}%&7)"
+        send "&r &eYour version: &7(&c{@version}&7)"
+        send "&r"
+        send formatted "&r &7Download new version: &6&n<link:{@updateurl}>Click Here<reset>"
+        send "&8&m-----------------------------------"
+        send "&r"
+      else if text from "{@updatetext}" is "{@version}":
+        wait 0.4 seconds
+        send "{@prefix} &fYou are using newest version!" to console
+        send "{@prefix} &fThank you for using &cBroadcast+ &fSkript by Andoz_Cz!" to console
+        send "{@prefix} &aYou are running the newest version!" to player
+      else:
+        send "{@prefix} &cError: Failed to check the updates, Please contact &c&lAndoz_Cz&c."
+
+command /bcp [<text>] [<text>] [<text>]:
+  description: Command for Broadcast+.
+  aliases: /broadcast+
+  trigger:
+    if executor is player:
+      if arg 1 is not set:
+        make player execute command "/bcp about"
+        stop trigger
+      if arg 1 is "about" or "info":
+        if player has permission "broadcastplus.basic" or "{@permission}":
+          send "&r" to player
+          send "&8&m-----------------------------------" to player
+          send "&r &8&l[&c&lBroadcast+&8&l] &7Informations About" to player
+          send "&r" to player
+          send "&r &eSkript made by &6&l<link:https://www.spigotmc.org/members/andoz_cz.231857/>Andoz_Cz<reset>" to player
+          send "&r &eVersion: &6&l{@version}" to player
+          send "&r &eThis Skript is under &6&l<link:http://creativecommons.org/licenses/by-sa/4.0/>Creative Commons<reset>&e licence." to player
+          send "&r" to player
+          send "&r &7Thank you for using my Skript :)" to player
+          send "&r" to player
+          send "&8&m-----------------------------------" to player
+          send "&r" to player
+        else:
+          send "{@prefix} {@nopermission}"
+
+      else if arg 1 is "edit":
+        if player has permission "broadcastplus.edit" or "{@permission}":
+          set {broadcast+.choosingeditingstyle.%player%} to true
+          send "&r" to player
+          send "&8&m-----------------------------------" to player
+          send "&r &8&l[&c&lBroadcast+&8&l] &7Editing styles" to player
+          send "&r" to player
+          send formatted "&r &eStyle 1: %{broadcast+.style.1}%" to player
+          send formatted "&r &eStyle 2: %{broadcast+.style.2}%" to player
+          send formatted "&r &eStyle 3: %{broadcast+.style.3}%" to player
+          send formatted "&r &eStyle 4: %{broadcast+.style.4}%" to player
+          send formatted "&r &eStyle 5: %{broadcast+.style.5}%" to player
+          send "&r" to player
+          send "&r &7Type in chat number from 1 to 5 to choose what style to edit or type &ccancel &7to cancel." to player
+          send "&r" to player
+          send "&8&m-----------------------------------" to player
+          send "&r" to player
+        else:
+          send "{@prefix} {@nopermission}"
+
+
+      else if arg 1 is "send":
+        if arg 2 is not set:
+          if player has permission "broadcastplus.send" or "{@permission}":
+            open chest with 3 rows named "{@prefix} &1Sending Broadcast" to player
+            wait 2 tick
+            format slot 0 of player with barrier named "&c&lClose" with lore "&7Click to close the GUI." to close
+            format slot 11 of player with coal named "&a&lStyle 1" with lore "&7Click to start sending" and "&7Broadcast with Style 1." and "&r" and "&8After you click, you will" and "&8see how this style looks in chat.." to close then run [make player execute command "/bcp send 1"]
+            format slot 12 of player with iron ingot named "&b&lStyle 2" with lore "&7Click to start sending" and "&7Broadcast with Style 2." and "&r" and "&8After you click, you will" and "&8see how this style looks in chat.." to close then run [make player execute command "/bcp send 2"]
+            format slot 13 of player with gold ingot named "&c&lStyle 3" with lore "&7Click to start sending" and "&7Broadcast with Style 3." and "&r" and "&8After you click, you will" and "&8see how this style looks in chat.." to close then run [make player execute command "/bcp send 3"]
+            format slot 14 of player with diamond named "&e&lStyle 4" with lore "&7Click to start sending" and "&7Broadcast with Style 4." and "&r" and "&8After you click, you will" and "&8see how this style looks in chat.." to close then run [make player execute command "/bcp send 4"]
+            format slot 15 of player with emerald named "&3&lStyle 5" with lore "&7Click to start sending" and "&7Broadcast with Style 5." and "&r" and "&8After you click, you will" and "&8see how this style looks in chat.." to close then run [make player execute command "/bcp send 5"]
+            stop trigger
+          else:
+            send "{@prefix} {@nopermission}"
+
+        if arg 2 is "1":
+          set {broadcast+.settingtext.1.%player%} to true
+          send "&r" to player
+          send "{@prefix} &7This style looks like this:" to player
+          send formatted "{@prefix} %{broadcast+.style.1}%" to player
+          send "&r" to player
+          send "{@prefix} &7Type in chat text you want to broadcast or type &ccancel &7to cancel." to player
+          send "&r" to player
+        else if arg 2 is "2":
+          set {broadcast+.settingtext.2.%player%} to true
+          send "&r" to player
+          send "{@prefix} &7This style looks like this:" to player
+          send formatted "{@prefix} %{broadcast+.style.2}%" to player
+          send "&r" to player
+          send "{@prefix} &7Type in chat text you want to broadcast or type &ccancel &7to cancel." to player
+          send "&r" to player
+        else if arg 2 is "3":
+          set {broadcast+.settingtext.3.%player%} to true
+          send "&r" to player
+          send "{@prefix} &7This style looks like this:" to player
+          send formatted "{@prefix} %{broadcast+.style.3}%" to player
+          send "&r" to player
+          send "{@prefix} &7Type in chat text you want to broadcast or type &ccancel &7to cancel." to player
+          send "&r" to player
+        else if arg 2 is "4":
+          set {broadcast+.settingtext.4.%player%} to true
+          send "&r" to player
+          send "{@prefix} &7This style looks like this:" to player
+          send formatted "{@prefix} %{broadcast+.style.4}%" to player
+          send "&r" to player
+          send "{@prefix} &7Type in chat text you want to broadcast or type &ccancel &7to cancel." to player
+          send "&r" to player
+        else if arg 2 is "5":
+          set {broadcast+.settingtext.5.%player%} to true
+          send "&r" to player
+          send "{@prefix} &7This style looks like this:" to player
+          send formatted "{@prefix} %{broadcast+.style.5}%" to player
+          send "&r" to player
+          send "{@prefix} &7Type in chat text you want to broadcast or type &ccancel &7to cancel." to player
+          send "&r" to player
+
+    if executor is console:
+      if arg 1 is not set:
+        send "{@prefix} &7This is not a valid command.." to console
+        stop trigger
+      else if arg 1 is "send":
+        if arg 2 is "1" or "2" or "3" or "4" or "5":
+          if arg 3 is set:
+            set {_style} to arg 2
+            set {_message} to arg 3
+            wait 1 tick
+            send "&r" to all players
+            send formatted "%{broadcast+.style.%{_style}%}%" to all players
+            send formatted "&f%{_message}%" to all players
+            send formatted "%{broadcast+.style.%{_style}%}%" to all players
+            send "&r" to all players
+            send "&r" to console
+            send formatted "%{broadcast+.style.%{_style}%}%" to console
+            send formatted "&f%{_message}%" to console
+            send formatted "%{broadcast+.style.%{_style}%}%" to console
+            send "&r" to console
+          else:
+            send "{@prefix} &7Please enter text of message you want to send after /bcp send <style> command!" to console
+            stop trigger          
+        else:
+          send "{@prefix} &7Please enter style of message you want after /bcp send command (it must be equal to or between 1 and 5)!" to console
+          stop trigger
+
+on chat:
+  if {broadcast+.editingstyle.1.%player%} is true:
+    cancel event
+    if message is not "cancel":
+      set {broadcast+.editingstyle.1.%player%} to false
+      set {broadcast+.style.1} to message
+      send "&r" to player
+      send "{@prefix} &7New look of &cStyle 1 &7is now changed to:" to player
+      send formatted "%{broadcast+.style.1}%" to player
+      send "&r" to player
+    else:
+      send "{@prefix} &7Editing style cancelled." to player
+      set {broadcast+.editingstyle.1.%player%} to false
+
+  else if {broadcast+.editingstyle.2.%player%} is true:
+    cancel event
+    if message is not "cancel":
+      set {broadcast+.editingstyle.2.%player%} to false
+      set {broadcast+.style.2} to message
+      send "&r" to player
+      send "{@prefix} &7New look of &cStyle 2 &7is now changed to:" to player
+      send formatted "%{broadcast+.style.2}%" to player
+      send "&r" to player
+    else:
+      send "{@prefix} &7Editing style cancelled." to player
+      set {broadcast+.editingstyle.2.%player%} to false
+
+on chat:
+  if {broadcast+.choosingeditingstyle.%player%} is true:
+    cancel event
+    if message is not "cancel":
+      if message is "1":
+        set {broadcast+.choosingeditingstyle.%player%} to false
+        set {broadcast+.editingstyle.1.%player%} to true
+        send "&r" to player
+        send "{@prefix} &7You have choosen Style 1 to edit." to player
+        send "{@prefix} &7Type in chat your new look for this style or type &ccancel &7to cancel!" to player
+        send "&r" to player
+
+      if message is "2":
+        set {broadcast+.choosingeditingstyle.%player%} to false
+        set {broadcast+.editingstyle.2.%player%} to true
+        send "&r" to player
+        send "{@prefix} &7You have choosen Style 2 to edit." to player
+        send "{@prefix} &7Type in chat your new look for this style or type &ccancel &7to cancel!" to player
+        send "&r" to player
+
+      if message is "3":
+        set {broadcast+.choosingeditingstyle.%player%} to false
+        set {broadcast+.editingstyle.3.%player%} to true
+        send "&r" to player
+        send "{@prefix} &7You have choosen Style 3 to edit." to player
+        send "{@prefix} &7Type in chat your new look for this style or type &ccancel &7to cancel!" to player
+        send "&r" to player
+
+      if message is "4":
+        set {broadcast+.choosingeditingstyle.%player%} to false
+        set {broadcast+.editingstyle.4.%player%} to true
+        send "&r" to player
+        send "{@prefix} &7You have choosen Style 4 to edit." to player
+        send "{@prefix} &7Type in chat your new look for this style or type &ccancel &7to cancel!" to player
+        send "&r" to player
+
+      if message is "5":
+        set {broadcast+.choosingeditingstyle.%player%} to false
+        set {broadcast+.editingstyle.5.%player%} to true
+        send "&r" to player
+        send "{@prefix} &7You have choosen Style 5 to edit." to player
+        send "{@prefix} &7Type in chat your new look for this style or type &ccancel &7to cancel!" to player
+        send "&r" to player
+
+    else:
+      send "{@prefix} &7Editing styles cancelled." to player
+      set {broadcast+.choosingeditingstyle.%player%} to false
+
+
+
+  if {broadcast+.settingtext.1.%player%} is true:
+    cancel event
+    if message is not "cancel":
+      set {broadcast+.text} to message
+      set {broadcast+.settingtext.1.%player%} to false
+      wait 1 tick
+      send "&r" to all players
+      send formatted "%{broadcast+.style.1}%" to all players
+      send formatted "&f%{broadcast+.text}%"
+      send formatted "%{broadcast+.style.1}%" to all players
+      send "&r" to all players
+      wait 1 tick
+      set {broadcast+.text} to "Nothing"
+    else:
+      send "{@prefix} &7Sending message cancelled." to player
+      set {broadcast+.settingtext.1.%player%} to false
+
+  else if {broadcast+.settingtext.2.%player%} is true:
+    cancel event
+    if message is not "cancel":
+      set {broadcast+.text} to message
+      set {broadcast+.settingtext.2.%player%} to false
+      wait 1 tick
+      send "&r" to all players
+      send formatted "%{broadcast+.style.2}%" to all players
+      send formatted "&f%{broadcast+.text}%"
+      send formatted "%{broadcast+.style.2}%" to all players
+      send "&r" to all players
+      wait 1 tick
+      set {broadcast+.text} to "Nothing"
+    else:
+      send "{@prefix} &7Sending message cancelled." to player
+      set {broadcast+.settingtext.2.%player%} to false
+
+  else if {broadcast+.settingtext.3.%player%} is true:
+    cancel event
+    if message is not "cancel":
+      set {broadcast+.text} to message
+      set {broadcast+.settingtext.3.%player%} to false
+      wait 1 tick
+      send "&r" to all players
+      send formatted "%{broadcast+.style.3}%" to all players
+      send formatted "&f%{broadcast+.text}%"
+      send formatted "%{broadcast+.style.3}%" to all players
+      send "&r" to all players
+      wait 1 tick
+      set {broadcast+.text} to "Nothing"
+    else:
+      send "{@prefix} &7Sending message cancelled." to player
+      set {broadcast+.settingtext.3.%player%} to false
+
+  else if {broadcast+.settingtext.4.%player%} is true:
+    cancel event
+    if message is not "cancel":
+      set {broadcast+.text} to message
+      set {broadcast+.settingtext.4.%player%} to false
+      wait 1 tick
+      send "&r" to all players
+      send formatted "%{broadcast+.style.4}%" to all players
+      send formatted "&f%{broadcast+.text}%"
+      send formatted "%{broadcast+.style.4}%" to all players
+      send "&r" to all players
+      wait 1 tick
+      set {broadcast+.text} to "Nothing"
+    else:
+      send "{@prefix} &7Sending message cancelled." to player
+      set {broadcast+.settingtext.4.%player%} to false
+
+  else if {broadcast+.settingtext.5.%player%} is true:
+    cancel event
+    if message is not "cancel":
+      set {broadcast+.text} to message
+      set {broadcast+.settingtext.5.%player%} to false
+      wait 1 tick
+      send "&r" to all players
+      send formatted "%{broadcast+.style.5}%" to all players
+      send formatted "&f%{broadcast+.text}%"
+      send formatted "%{broadcast+.style.5}%" to all players
+      send "&r" to all players
+      wait 1 tick
+      set {broadcast+.text} to "Nothing"
+    else:
+      send "{@prefix} &7Sending message cancelled." to player
+      set {broadcast+.settingtext.5.%player%} to false
