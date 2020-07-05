@@ -2,7 +2,6 @@ options:
 	
 	prefix: &8&l[&c&lBC+&8&l]
 	nopermission: &cYou don't have permission for that!
-	cooldownmsg: &cPlease wait until the cooldown ends
 
 	version: v1.1
 		
